@@ -1,7 +1,11 @@
 # Ping-Pong
 
 Diese Automation "lauscht" auf dem Kanal #pingpong und beantwortet ein "Ping"
-mit einem "Pong", deiner Postleitzahl und der Uhrzeit
+mit einem "Pong", deiner Postleitzahl und der Uhrzeit  
+Die Idee hinter dieser Automatisierung:  
+Über den Kanal #pingpong kann man einfach das Netzwerk und die Erreichbarkeit testen, ohne auf andere Leute angewiesen zu sein.  
+Das macht natürlich nur Sinn, wenn diese Automatisierung an mehreren Stellen im Netz vorhanden ist.   
+Man kann also auch Nachts um 3 testen ob man erreichbar ist. ;)
 
 ---
 
@@ -37,7 +41,7 @@ actions:
 ```
 ---
 ## ℹ️ Automation erstellen
-> Ertelle in Home Assistant eine neue Automation und stelle über das 3-Punkte Menue die Darstellung auf "In YAML bearbeiten" um.
+> Erstelle in Home Assistant eine neue Automation und stelle über das 3-Punkte Menu die Darstellung auf "In YAML bearbeiten" um.
 > Kopieren die oben angezeigte YAML in deine Automation.  
 > Ersetze meine Postleitzahl mit deiner und ändere ggf. den Alias (Name der Automation)
 
