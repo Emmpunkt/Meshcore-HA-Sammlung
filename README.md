@@ -16,7 +16,7 @@ Man kann also auch Nachts um 3 testen ob man erreichbar ist. 😉
 > Automationen immer nur einsetzen wenn sie dem Netz nicht schaden!
 ---
 ## 💡 Wichtig!
-> Der Kanal #pingpong muss auf dem Node der an Home Assistant angeschlossen ist, schon vorhanden sein.  
+> Der Kanal #pingpong muss auf dem Node, der an Home Assistant angeschlossen ist, schon vorhanden sein.  
 > Falls nicht muss du ihn vorher am Gerät einstellen.    
 > Das Meshcore-HA Plugin muss natürlich installiert und funktiontüchtig sein.
 ---
