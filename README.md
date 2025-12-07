@@ -1,2 +1,45 @@
-# Meshcore-HA-Sammlung
-Sammlung von Automationen für Meshcore-HA
+# Ping-Pong
+
+Diese Automation "lauscht" auf dem Kanal #pingpong und beantwortet ein "Ping"
+mit einem "Pong", deiner Postleitzahl und der Uhrzeit
+
+---
+
+## ⚠️ Wichtiger Hinweis
+> **Achtung:**   
+> Bitte bedenke das du mit Automationen ein Netzwerk lahmlegen kannst.  
+> Dies wird zur Blockierung deines Nodes und/oder Repeaters führen.  
+> Automationen immer nur einsetzen wenn sie dem Netz nicht schaden!
+---
+## 💡 Wichtig!
+> Der Kanal #pingpong muss auf dem Node der an Home Assistant angeschlossen ist, schon vorhanden sein.  
+> Falls nicht muss du ihn vorher am Gerät einstellen.    
+> Das Meshcore-HA Plugin muss natürlich installiert und funktiontüchtig sein.
+---
+## 📂 Automation Ping-Pong
+
+```yaml
+alias: Antwort auf Ping mit Pong
+triggers:
+  - event_type: meshcore_message
+    event_data:
+      channel: "#pingpong"
+    trigger: event
+conditions:
+  - condition: template
+    value_template: "{{ trigger.event.data.message | lower == 'ping' }}"
+actions:
+  - data:
+      channel_idx: 1
+      message: Pong - 51588 - {{ now().strftime('%H:%M:%S') }}
+    action: meshcore.send_channel_message
+
+```
+---
+## ℹ️ Automation erstellen
+> Ertelle in Home Assistant eine neue Automation und stelle über das 3-Punkte Menue die Darstellung auf "In YAML bearbeiten" um.
+> Kopieren die oben angezeigte YAML in deine Automation.  
+> Ersetze meine Postleitzahl mit deiner und ändere ggf. den Alias (Name der Automation)
+
+---
+
