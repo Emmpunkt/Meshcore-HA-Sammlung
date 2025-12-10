@@ -15,7 +15,7 @@ Man kann also auch Nachts um 3 testen ob man erreichbar ist. 😉
 > Dies wird zur Blockierung deines Nodes und/oder Repeaters führen.  
 > Automationen immer nur einsetzen wenn sie dem Netz nicht schaden!
 ---
-## 💡 Wichtig!
+## 💡 Voraussetzungen!
 > Der Kanal #pingpong muss auf dem Node, der an Home Assistant angeschlossen ist, schon vorhanden sein.  
 > Falls nicht muss du ihn vorher am Gerät einstellen.    
 > Das Meshcore-HA Plugin muss natürlich installiert und funktiontüchtig sein.  [Meshcore-HA](https://github.com/meshcore-dev/meshcore-ha.git)
