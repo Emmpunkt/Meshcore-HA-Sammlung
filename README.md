@@ -24,7 +24,7 @@ Man kann also auch Nachts um 3 testen ob man erreichbar ist. 😉
 ## 📂 Automation Ping-Pong
 
 ```yaml
-alias: Antwort auf Ping mit Pong
+alias: Antwort auf Ping mit Absender und Pfad
 triggers:
   - event_type: meshcore_message
     event_data:
