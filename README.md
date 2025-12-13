@@ -24,7 +24,7 @@ Man kann also auch Nachts um 3 testen ob man erreichbar ist. 😉
 ## 📂 Automation Ping-Pong
 
 ```yaml
-alias: Antwort auf Ping mit Absender und Pfad
+alias: Antwort auf Ping mit Pong
 triggers:
   - event_type: meshcore_message
     event_data:
@@ -38,25 +38,25 @@ actions:
       channel_idx: 1
       message: >
         {% set sender =
-            trigger.event.data.sender_name
-            or trigger.event.data.sender
+            trigger.event.data.sender
+            or trigger.event.data.sender_name
             or trigger.event.data.src_node_name
-            or trigger.event.data.from_name
             or trigger.event.data.from
+            or trigger.event.data.from_name
             or 'unbekannt'
         %}
         {% set rx = (trigger.event.data.rx_log_data or []) %}
         {% set path = (rx and rx[0].path) or '' %}
         {% set path_pairs = path | list | batch(2) | map('join') | list %}
-        @{{ sender }}
-        - 51588
+        @{{ sender }}- 51588 - https://github.com/Emmpunkt/Meshcore-HA-Sammlung.git
 
         {% if path %}
-        - Pfad: {{ path_pairs | map('regex_replace','^(.*)$','@\\1') | join(',') }}
+        - Pfad: {{ path_pairs | join(',') }}
         {% else %}
         - Pfad: direkt
         {% endif %}
     action: meshcore.send_channel_message
+
 ```
 ---
 ## ℹ️ Automation erstellen
