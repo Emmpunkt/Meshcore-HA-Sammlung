@@ -1,7 +1,7 @@
 # Ping-Pong
 
 Diese Automation "lauscht" auf dem Kanal #pingpong und beantwortet ein "Ping"
-mit einem "Pong", deiner Postleitzahl und der Uhrzeit  
+mit deiner Postleitzahl und dem Namen und Pfad des Absenders  
 Die Idee hinter dieser Automatisierung:  
 Über den Kanal #pingpong kann man einfach das Netzwerk und die Erreichbarkeit testen, ohne auf andere Leute angewiesen zu sein.  
 Das macht natürlich nur Sinn, wenn diese Automatisierung an mehreren Stellen im Netz vorhanden ist.   
@@ -36,8 +36,27 @@ conditions:
 actions:
   - data:
       channel_idx: 1
-      message: Pong - 51588 - {{ now().strftime('%H:%M:%S') }}
+      message: >
+        {% set sender =
+            trigger.event.data.sender
+            or trigger.event.data.sender_name
+            or trigger.event.data.src_node_name
+            or trigger.event.data.from
+            or trigger.event.data.from_name
+            or 'unbekannt'
+        %}
+        {% set rx = (trigger.event.data.rx_log_data or []) %}
+        {% set path = (rx and rx[0].path) or '' %}
+        {% set path_pairs = path | list | batch(2) | map('join') | list %}
+        51588
+        - Absender: {{ sender }}
+        {% if path %}
+        - Pfad: {{ path_pairs | join(',') }}
+        {% else %}
+        - Pfad: direkt
+        {% endif %}
     action: meshcore.send_channel_message
+
 
 ```
 ---
