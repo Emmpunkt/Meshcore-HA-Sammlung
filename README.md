@@ -49,7 +49,7 @@ actions:
         {% set path = (rx and rx[0].path) or '' %}
         {% set path_pairs = path | list | batch(2) | map('join') | list %}
         @{{ sender }}
-        - 51588 - https://github.com/Emmpunkt/Meshcore-HA-Sammlung.git
+        - 51588
 
         {% if path %}
         - Pfad: {{ path_pairs | map('regex_replace','^(.*)$','@\\1') | join(',') }}
