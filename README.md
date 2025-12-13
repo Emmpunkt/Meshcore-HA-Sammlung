@@ -57,7 +57,7 @@ actions:
         - Pfad: direkt
         {% endif %}
     action: meshcore.send_channel_message
-
+```
 ---
 ## ℹ️ Automation erstellen
 > Erstelle in Home Assistant eine neue Automation und stelle über das 3-Punkte Menu die Darstellung auf "In YAML bearbeiten" um.
