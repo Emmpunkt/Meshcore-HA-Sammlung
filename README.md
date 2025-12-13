@@ -38,27 +38,26 @@ actions:
       channel_idx: 1
       message: >
         {% set sender =
-            trigger.event.data.sender
-            or trigger.event.data.sender_name
+            trigger.event.data.sender_name
+            or trigger.event.data.sender
             or trigger.event.data.src_node_name
-            or trigger.event.data.from
             or trigger.event.data.from_name
+            or trigger.event.data.from
             or 'unbekannt'
         %}
         {% set rx = (trigger.event.data.rx_log_data or []) %}
         {% set path = (rx and rx[0].path) or '' %}
         {% set path_pairs = path | list | batch(2) | map('join') | list %}
-        51588
-        - Absender: {{ sender }}
+        @{{ sender }}
+        - 51588 - https://github.com/Emmpunkt/Meshcore-HA-Sammlung.git
+
         {% if path %}
-        - Pfad: {{ path_pairs | join(',') }}
+        - Pfad: {{ path_pairs | map('regex_replace','^(.*)$','@\\1') | join(',') }}
         {% else %}
         - Pfad: direkt
         {% endif %}
     action: meshcore.send_channel_message
 
-
-```
 ---
 ## ℹ️ Automation erstellen
 > Erstelle in Home Assistant eine neue Automation und stelle über das 3-Punkte Menu die Darstellung auf "In YAML bearbeiten" um.
