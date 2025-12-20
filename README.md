@@ -2,6 +2,7 @@
 
 Diese Automation "lauscht" auf dem Kanal #pingpong und beantwortet ein "Ping"
 mit deiner Postleitzahl und dem Namen und Pfad des Absenders  
+Wenn mehrere Pfade erkannt werden, werden auch diese gesendet.
 Die Idee hinter dieser Automatisierung:  
 Über den Kanal #pingpong kann man einfach das Netzwerk und die Erreichbarkeit testen, ohne auf andere Leute angewiesen zu sein.  
 Das macht natürlich nur Sinn, wenn diese Automatisierung an mehreren Stellen im Netz vorhanden ist.   
@@ -34,9 +35,14 @@ conditions:
   - condition: template
     value_template: "{{ trigger.event.data.message | lower == 'ping' }}"
 actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
   - data:
       channel_idx: 1
-      message: >
+      message: |
         {% set sender =
             trigger.event.data.sender
             or trigger.event.data.sender_name
@@ -46,16 +52,25 @@ actions:
             or 'unbekannt'
         %}
         {% set rx = (trigger.event.data.rx_log_data or []) %}
-        {% set path = (rx and rx[0].path) or '' %}
-        {% set path_pairs = path | list | batch(2) | map('join') | list %}
-        @{{ sender }}- 51588 - https://github.com/Emmpunkt/Meshcore-HA-Sammlung.git
-
-        {% if path %}
-        - Pfad: {{ path_pairs | join(',') }}
-        {% else %}
-        - Pfad: direkt
-        {% endif %}
+        @[{{ sender }}] -51588
+        {% if rx %}-Pfade: {% for entry in rx -%}
+          {% set path_pairs = entry.path | list | batch(2) | map('join') | list %}
+          {% if path_pairs %}Hops {{ entry.path_len }}={{ path_pairs | join(',') }}{% else %}Hops {{ entry.path_len }}=direkt{% endif %}{% if not loop.last %}; {% endif %}
+        {%- endfor %}{% else %}- Pfad: direkt{% endif %}
     action: meshcore.send_channel_message
+  - target:
+      entity_id: input_text.meshcore_letzter_pfad
+    data:
+      value: |
+        {% set rx = (trigger.event.data.rx_log_data or []) %} {% if rx %}
+          {% for entry in rx -%}
+            {% set path_pairs = entry.path | list | batch(2) | map('join') | list %}
+            {% if path_pairs %}Hop {{ entry.path_len }}={{ path_pairs | join(',') }}{% else %}Hop {{ entry.path_len }}=direkt{% endif %}{% if not loop.last %}; {% endif %}
+          {%- endfor %}
+        {% else %}
+          direkt
+        {% endif %}
+    action: input_text.set_value
 
 ```
 ---
