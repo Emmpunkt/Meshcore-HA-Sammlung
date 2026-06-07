@@ -25,7 +25,7 @@ Man kann also auch Nachts um 3 testen ob man erreichbar ist. 😉
 ## 📂 Automation Ping-Pong
 
 ```yaml
-alias: Antwort auf Ping mit Pong
+alias: Antwort auf Ping mit Pong 2
 triggers:
   - event_type: meshcore_message
     event_data:
@@ -33,43 +33,48 @@ triggers:
     trigger: event
 conditions:
   - condition: template
-    value_template: "{{ trigger.event.data.message | lower == 'ping' }}"
+    value_template: "{{ trigger.event.data.message | lower | trim == 'ping' }}"
 actions:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 10
-      milliseconds: 0
+      seconds: 0
+      milliseconds: 200
   - data:
       channel_idx: 1
-      message: |
-        {% set sender =
-            trigger.event.data.sender
-            or trigger.event.data.sender_name
-            or trigger.event.data.src_node_name
-            or trigger.event.data.from
-            or trigger.event.data.from_name
-            or 'unbekannt'
+      message: >-
+        {% set sender = trigger.event.data.sender or
+        trigger.event.data.sender_name or trigger.event.data.src_node_name or
+        trigger.event.data.from or trigger.event.data.from_name or 'unbekannt'
+        %} {% set rx = (trigger.event.data.rx_log_data or []) %} {% if rx %} {%
+        set ns = namespace(parts=[]) %} {% for entry in rx %} {% set hash_size =
+        entry.path_hash_size | default(2) | int %} {% set chars = hash_size * 2
+        %} {% set path_str = entry.path | string %} {% set ns2 =
+        namespace(pairs=[]) %} {% for i in range(0, path_str | length, chars)
+        %}{% set chunk = path_str[i:i+chars] %}{% if chunk | length == chars
+        %}{% set ns2.pairs = ns2.pairs + [chunk] %}{% endif %}{% endfor %} {% if
+        ns2.pairs %}{% set ns.parts = ns.parts + ['Hops ' + entry.path_len |
+        string + '=' + ns2.pairs | join(',')] %}{% else %}{% set ns.parts =
+        ns.parts + ['Hops ' + entry.path_len | string + '=direkt'] %}{% endif %}
+        {% endfor %} @[{{ sender }}] -51588 -Pfade: {{ ns.parts | join('; ') }}
+        {% else %} @[{{ sender }}] -51588 -Pfad: direkt oder unbekannt {% endif
         %}
-        {% set rx = (trigger.event.data.rx_log_data or []) %}
-        @[{{ sender }}] -51588
-        {% if rx %}-Pfade: {% for entry in rx -%}
-          {% set path_pairs = entry.path | list | batch(2) | map('join') | list %}
-          {% if path_pairs %}Hops {{ entry.path_len }}={{ path_pairs | join(',') }}{% else %}Hops {{ entry.path_len }}=direkt{% endif %}{% if not loop.last %}; {% endif %}
-        {%- endfor %}{% else %}- Pfad: direkt{% endif %}
     action: meshcore.send_channel_message
   - target:
       entity_id: input_text.meshcore_letzter_pfad
     data:
-      value: |
-        {% set rx = (trigger.event.data.rx_log_data or []) %} {% if rx %}
-          {% for entry in rx -%}
-            {% set path_pairs = entry.path | list | batch(2) | map('join') | list %}
-            {% if path_pairs %}Hop {{ entry.path_len }}={{ path_pairs | join(',') }}{% else %}Hop {{ entry.path_len }}=direkt{% endif %}{% if not loop.last %}; {% endif %}
-          {%- endfor %}
-        {% else %}
-          direkt
-        {% endif %}
+      value: >-
+        {% set rx = (trigger.event.data.rx_log_data or []) %} {% if rx %} {% set
+        ns = namespace(parts=[]) %} {% for entry in rx %} {% set hash_size =
+        entry.path_hash_size | default(2) | int %} {% set chars = hash_size * 2
+        %} {% set path_str = entry.path | string %} {% set ns2 =
+        namespace(pairs=[]) %} {% for i in range(0, path_str | length, chars)
+        %}{% set chunk = path_str[i:i+chars] %}{% if chunk | length == chars
+        %}{% set ns2.pairs = ns2.pairs + [chunk] %}{% endif %}{% endfor %} {% if
+        ns2.pairs %}{% set ns.parts = ns.parts + ['Hop ' + entry.path_len |
+        string + '=' + ns2.pairs | join(',')] %}{% else %}{% set ns.parts =
+        ns.parts + ['Hop ' + entry.path_len | string + '=direkt'] %}{% endif %}
+        {% endfor %} {{ ns.parts | join('; ') }} {% else %}direkt{% endif %}
     action: input_text.set_value
 
 ```
